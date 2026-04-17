@@ -2,59 +2,173 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANO CLOUD | ULTRA REALISTIC 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WANO CLOUD PANEL | Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
-<body>
+<body class="wano-panel-body">
 
-    <nav>
-        <div class="container">
-            <a href="#" class="logo-wrapper">
-                <svg class="logo-vector" viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                </svg>
-                <span class="logo-text">WANO CLOUD</span>
-            </a>
-            <button class="btn-primary" onclick="login()">لوحة التحكم</button>
-        </div>
-    </nav>
+    <div id="page-loader" class="loader-bar"></div>
 
-    <div class="container">
-        <header>
-            <h1>الجيل القادم من الاستضافة</h1>
-            <p>تحكم كامل بمواردك، حماية فائقة بالذكاء الاصطناعي، وأداء لا يضاهى.</p>
-        </header>
-
-        <section class="rules-panel">
-            <h2>
-                <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
-                نظام المراقبة الذكي (AI SHIELD)
-            </h2>
-            <div class="rule-list">
-                <div class="rule-item">يتم فحص محتوى السكريبتات تلقائياً؛ أي محاولة لإنشاء Self-bot ديسكورد تؤدي للحظر.</div>
-                <div class="rule-item">يُمنع استغلال موارد السيرفر في التعدين أو هجمات الحجب.</div>
+    <div class="panel-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <svg class="logo-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                <span class="logo-text">WANO PANEL</span>
             </div>
-        </section>
-
-        <div class="main-actions">
-            <button class="btn-create-host" onclick="createNewHost()">
-                <div class="btn-create-host-inner">
-                    <svg class="btn-create-host-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-                    </svg>
-                    <span class="btn-create-host-text">إنشاء هوست جديد</span>
+            
+            <div class="sidebar-user">
+                <div class="avatar">W</div>
+                <div class="user-info">
+                    <span class="username">wn6b</span>
+                    <span class="role text-neon">Super Admin</span>
                 </div>
-            </button>
-        </div>
-
-        <div class="dashboard-grid" id="hostsGrid">
             </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">الرئيسية</div>
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    لوحة التحكم
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg>
+                    الخوادم (Servers)
+                </a>
+                
+                <div class="nav-section">إدارة الموارد</div>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.36 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                    العقد (Nodes)
+                </a>
+                <a href="#" class="nav-item text-danger">
+                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    AI Shield (الرقابة)
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="server-status">
+                    <span class="status-dot online"></span> Node-01 (Germany) Online
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <header class="topbar">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <input type="text" placeholder="البحث عن سيرفر بالـ ID أو الاسم...">
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn-icon" title="التنبيهات"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></button>
+                    <button class="btn-primary" onclick="openCreateModal()">+ إنشاء خادم جديد</button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h2>ملخص الموارد (Account Limits)</h2>
+                    <p>خطة WANO VIP - مجانية مدى الحياة</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon cpu-icon"><svg viewBox="0 0 24 24"><path d="M21 11V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10zm-2-8H9v6h6V9z"/></svg></div>
+                        <div class="stat-details">
+                            <span class="stat-title">CPU (vCores)</span>
+                            <span class="stat-value">500% <small>/ Unlimited</small></span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon ram-icon"><svg viewBox="0 0 24 24"><path d="M2 22h20V2zM12 11h2v2h-2zm4 0h2v2h-2zm-8 0h2v2H8zm-4 0h2v2H4zm0-4h2v2H4zm4 0h2v2H8zm4 0h2v2h-2zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg></div>
+                        <div class="stat-details">
+                            <span class="stat-title">RAM (Memory)</span>
+                            <span class="stat-value">32 GB <small>/ 64 GB</small></span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon disk-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-2 14H6V6h12v12zM8 8h8v2H8zm0 4h8v2H8z"/></svg></div>
+                        <div class="stat-details">
+                            <span class="stat-title">Disk (NVMe SSD)</span>
+                            <span class="stat-value">100 GB <small>/ 100 GB</small></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="servers-section">
+                    <div class="section-heading">
+                        <h3>الخوادم النشطة (Your Servers)</h3>
+                        <div class="controls">
+                            <button class="btn-secondary active">الكل</button>
+                            <button class="btn-secondary">Discord</button>
+                            <button class="btn-secondary">WhatsApp</button>
+                        </div>
+                    </div>
+
+                    <div class="servers-grid" id="serversContainer">
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="script.js"></script>
+    <div class="modal-overlay" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تكوين خادم جديد (Deploy Server)</h3>
+                <button class="btn-close" onclick="closeCreateModal()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>اسم الخادم (Server Name)</label>
+                    <input type="text" id="serverName" placeholder="مثال: Wano Music Bot" autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label>البيئة البرمجية (Software)</label>
+                    <div class="software-options">
+                        <div class="option-card selected">Node.js (v20)</div>
+                        <div class="option-card">Python (3.11)</div>
+                        <div class="option-card">Baileys (WA)</div>
+                    </div>
+                </div>
+
+                <div class="form-group limits-group">
+                    <label>تخصيص الموارد (Allocations)</label>
+                    <div class="sliders">
+                        <div class="slider-row">
+                            <span>CPU (500%)</span>
+                            <div class="fake-slider"><div class="fill" style="width: 100%;"></div></div>
+                        </div>
+                        <div class="slider-row">
+                            <span>RAM (32GB)</span>
+                            <div class="fake-slider"><div class="fill" style="width: 100%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="warning-text">
+                    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L1 21h22M12 6l-7.53 13h15.06M11 10v4h2v-4m-2 6v2h2v-2"/></svg>
+                    سيتم فحص الأكواد آلياً لمنع السيلف بوت.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCreateModal()">إلغاء</button>
+                <button class="btn-primary btn-glow" onclick="submitNewServer()">🚀 بدء التشغيل</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
