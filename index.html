@@ -1,174 +1,417 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WANO CLOUD PANEL | Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js" defer></script>
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WanoHost — استضافة بوتات احترافية مجانية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="wano-panel-body">
+<body>
 
-    <div id="page-loader" class="loader-bar"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
 
-    <div class="panel-layout">
-        
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <svg class="logo-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                <span class="logo-text">WANO PANEL</span>
-            </div>
-            
-            <div class="sidebar-user">
-                <div class="avatar">W</div>
-                <div class="user-info">
-                    <span class="username">wn6b</span>
-                    <span class="role text-neon">Super Admin</span>
-                </div>
-            </div>
+  <canvas id="particleCanvas"></canvas>
 
-            <nav class="sidebar-nav">
-                <div class="nav-section">الرئيسية</div>
-                <a href="#" class="nav-item active">
-                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-                    لوحة التحكم
-                </a>
-                <a href="#" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg>
-                    الخوادم (Servers)
-                </a>
-                
-                <div class="nav-section">إدارة الموارد</div>
-                <a href="#" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.36 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-                    العقد (Nodes)
-                </a>
-                <a href="#" class="nav-item text-danger">
-                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                    AI Shield (الرقابة)
-                </a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <div class="server-status">
-                    <span class="status-dot online"></span> Node-01 (Germany) Online
-                </div>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            
-            <header class="topbar">
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                    <input type="text" placeholder="البحث عن سيرفر بالـ ID أو الاسم...">
-                </div>
-                <div class="topbar-actions">
-                    <button class="btn-icon" title="التنبيهات"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></button>
-                    <button class="btn-primary" onclick="openCreateModal()">+ إنشاء خادم جديد</button>
-                </div>
-            </header>
-
-            <div class="content-wrapper">
-                <div class="page-header">
-                    <h2>ملخص الموارد (Account Limits)</h2>
-                    <p>خطة WANO VIP - مجانية مدى الحياة</p>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon cpu-icon"><svg viewBox="0 0 24 24"><path d="M21 11V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10zm-2-8H9v6h6V9z"/></svg></div>
-                        <div class="stat-details">
-                            <span class="stat-title">CPU (vCores)</span>
-                            <span class="stat-value">500% <small>/ Unlimited</small></span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon ram-icon"><svg viewBox="0 0 24 24"><path d="M2 22h20V2zM12 11h2v2h-2zm4 0h2v2h-2zm-8 0h2v2H8zm-4 0h2v2H4zm0-4h2v2H4zm4 0h2v2H8zm4 0h2v2h-2zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg></div>
-                        <div class="stat-details">
-                            <span class="stat-title">RAM (Memory)</span>
-                            <span class="stat-value">32 GB <small>/ 64 GB</small></span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon disk-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-2 14H6V6h12v12zM8 8h8v2H8zm0 4h8v2H8z"/></svg></div>
-                        <div class="stat-details">
-                            <span class="stat-title">Disk (NVMe SSD)</span>
-                            <span class="stat-value">100 GB <small>/ 100 GB</small></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="servers-section">
-                    <div class="section-heading">
-                        <h3>الخوادم النشطة (Your Servers)</h3>
-                        <div class="controls">
-                            <button class="btn-secondary active">الكل</button>
-                            <button class="btn-secondary">Discord</button>
-                            <button class="btn-secondary">WhatsApp</button>
-                        </div>
-                    </div>
-
-                    <div class="servers-grid" id="serversContainer">
-                        <div class="skeleton-card"></div>
-                        <div class="skeleton-card"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-hexagon-nodes"></i></span>
+        <span class="logo-text">Wano<span class="logo-accent">Host</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#plans">الخطط المجانية</a>
+        <a href="#features">المميزات</a>
+        <a href="#rules">القوانين</a>
+        <a href="#status">حالة السيرفرات</a>
+        <a href="#bots">لوحة التحكم</a>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-ghost" id="loginBtn">تسجيل الدخول</button>
+        <button class="btn-primary" id="registerBtn"><i class="fa-solid fa-rocket"></i> ابدأ مجاناً</button>
+      </div>
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
     </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#plans">الخطط المجانية</a>
+      <a href="#features">المميزات</a>
+      <a href="#rules">القوانين</a>
+      <a href="#status">حالة السيرفرات</a>
+      <a href="#bots">لوحة التحكم</a>
+      <button class="btn-ghost" id="loginBtnM">تسجيل الدخول</button>
+      <button class="btn-primary" id="registerBtnM">ابدأ مجاناً</button>
+    </div>
+  </nav>
 
-    <div class="modal-overlay" id="createModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>تكوين خادم جديد (Deploy Server)</h3>
-                <button class="btn-close" onclick="closeCreateModal()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>اسم الخادم (Server Name)</label>
-                    <input type="text" id="serverName" placeholder="مثال: Wano Music Bot" autocomplete="off">
-                </div>
-                
-                <div class="form-group">
-                    <label>البيئة البرمجية (Software)</label>
-                    <div class="software-options">
-                        <div class="option-card selected">Node.js (v20)</div>
-                        <div class="option-card">Python (3.11)</div>
-                        <div class="option-card">Baileys (WA)</div>
-                    </div>
-                </div>
-
-                <div class="form-group limits-group">
-                    <label>تخصيص الموارد (Allocations)</label>
-                    <div class="sliders">
-                        <div class="slider-row">
-                            <span>CPU (500%)</span>
-                            <div class="fake-slider"><div class="fill" style="width: 100%;"></div></div>
-                        </div>
-                        <div class="slider-row">
-                            <span>RAM (32GB)</span>
-                            <div class="fake-slider"><div class="fill" style="width: 100%;"></div></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <p class="warning-text">
-                    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L1 21h22M12 6l-7.53 13h15.06M11 10v4h2v-4m-2 6v2h2v-2"/></svg>
-                    سيتم فحص الأكواد آلياً لمنع السيلف بوت.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeCreateModal()">إلغاء</button>
-                <button class="btn-primary btn-glow" onclick="submitNewServer()">🚀 بدء التشغيل</button>
-            </div>
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="grid-overlay"></div>
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>الخوادم تعمل بنسبة 100% — استضافة مجانية مدى الحياة</span>
+      </div>
+      <h1 class="hero-title">
+        استضافة بوتات<br/>
+        <span class="gradient-text">بدون أي قيود</span>
+      </h1>
+      <p class="hero-sub">
+        استضف بوتاتك على Discord، Telegram، و WhatsApp بأداء خارق وأمان تام ومجاناً بالكامل.
+        سيرفرات مخصصة لبيئة JavaScript (Node.js)، نسبة تشغيل 24/7، ولوحة تحكم متطورة.
+      </p>
+      <div class="hero-btns">
+        <button class="btn-primary btn-lg" id="startFree">إنشاء الهوست <i class="fa-solid fa-arrow-left"></i></button>
+        <button class="btn-outline btn-lg" id="watchDemo">
+          <span class="play-icon"><i class="fa-solid fa-play"></i></span> شاهد لوحة التحكم
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="12400">0</span>
+          <span class="stat-label">بوت نشط الآن</span>
         </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="100">0</span><span class="stat-suffix">%</span>
+          <span class="stat-label">وقت التشغيل Uptime</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="4300">0</span>
+          <span class="stat-label">مطور يثق بنا</span>
+        </div>
+      </div>
     </div>
+    <div class="hero-terminal">
+      <div class="terminal-header">
+        <span class="t-dot red"></span>
+        <span class="t-dot yellow"></span>
+        <span class="t-dot green"></span>
+        <span class="t-title">wanohost ~ local-deploy</span>
+      </div>
+      <div class="terminal-body" id="terminalBody">
+        <div class="t-line"><span class="t-prompt">root@localhost:~$</span> <span class="t-cmd">wano deploy --bot index.js</span></div>
+      </div>
+    </div>
+  </section>
 
+  <section class="features" id="features">
+    <div class="section-header">
+      <span class="section-tag">البنية التحتية</span>
+      <h2>كل شي تحتاجه في مكان واحد مجاناً</h2>
+      <p>بنية تحتية على مستوى المؤسسات، نقدمها لمجتمع المطورين بدون أي تكاليف</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card card-wide">
+        <div class="feature-icon neon-blue"><i class="fa-solid fa-microchip"></i></div>
+        <h3>أداء خارق السرعة</h3>
+        <p>سيرفرات NVMe SSD مع معالجات مخصصة. أقصى حد CPU 100%، وموارد RAM مفتوحة لتناسب استهلاك الـ JS.</p>
+        <div class="feature-bar">
+          <div class="bar-fill cpu-bar"></div>
+          <span>CPU Usage: <span id="cpuVal">0</span>%</span>
+        </div>
+        <div class="feature-bar">
+          <div class="bar-fill ram-bar"></div>
+          <span>RAM Usage: <span id="ramVal">0</span>%</span>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon neon-green"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>حماية متقدمة للشبكات</h3>
+        <p>نظام حماية L7/L4 داخلي وخارجي. خوادمك آمنة من أي هجمات خبيثة.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon neon-purple"><i class="fa-solid fa-robot"></i></div>
+        <h3>نظام فلترة ذكي</h3>
+        <p>خوارزميات مخصصة تراقب العمليات لتجنب استهلاك الموارد المفرط وإيقاف البوتات المخالفة تلقائياً.</p>
+        <div class="ai-scanner">
+          <div class="scanner-line"></div>
+          <div class="scan-item safe"><i class="fa-solid fa-check"></i> index.js — مستقر</div>
+          <div class="scan-item safe"><i class="fa-solid fa-check"></i> app.js — مستقر</div>
+          <div class="scan-item danger"><i class="fa-solid fa-xmark"></i> ddos.js — تم الإيقاف!</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon neon-orange"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>لوحة تحكم حية</h3>
+        <p>راقب استهلاك المعالج، الذاكرة، وقراءة الـ Console في الوقت الفعلي عبر اتصال WebSocket.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon neon-blue"><i class="fa-solid fa-rotate-right"></i></div>
+        <h3>إعادة تشغيل تلقائية</h3>
+        <p>PM2 مدمج. البوت يعيد تشغيل نفسه فوراً عند حدوث أي خطأ في الكود لضمان الاستمرارية.</p>
+      </div>
+      <div class="feature-card card-wide">
+        <div class="feature-icon neon-green"><i class="fa-solid fa-network-wired"></i></div>
+        <h3>دعم جميع المنصات</h3>
+        <p>نظامنا مهيأ لدعم مكتبات JavaScript (مثل Discord.js و Baileys للواتساب) بأفضل أداء ممكن.</p>
+        <div class="platforms-grid">
+          <div class="platform-chip discord"><i class="fa-brands fa-discord"></i> Discord</div>
+          <div class="platform-chip telegram"><i class="fa-brands fa-telegram"></i> Telegram</div>
+          <div class="platform-chip whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</div>
+          <div class="platform-chip slack"><i class="fa-brands fa-slack"></i> Slack</div>
+          <div class="platform-chip custom"><i class="fa-solid fa-code"></i> Custom API</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="plans" id="plans">
+    <div class="section-header">
+      <span class="section-tag">الاستضافة المجانية</span>
+      <h2>موارد ضخمة، بدون أي تكاليف</h2>
+      <p>صممنا هذه البنية التحتية لدعم المطورين. اختر الموارد التي يحتاجها مشروعك البرمجي.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-badge free">أساسي</div>
+        <h3>Starter</h3>
+        <div class="plan-price"><span class="price-num">$0</span><span class="price-period">/مدى الحياة</span></div>
+        <ul class="plan-features">
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> استضافة بوت واحد</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> 512MB RAM</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> CPU 50%</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> تشغيل 24/7</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> دعم Node.js & JS</li>
+          <li class="disabled"><i class="fa-solid fa-xmark" style="margin-left: 8px;"></i> Custom Domain</li>
+        </ul>
+        <button class="btn-outline plan-btn" onclick="selectPlan('free')">إنشاء الهوست</button>
+      </div>
+      <div class="plan-card popular">
+        <div class="plan-badge pro">الأكثر طلباً <i class="fa-solid fa-star"></i></div>
+        <h3>Advanced</h3>
+        <div class="plan-price"><span class="price-num">$0</span><span class="price-period">/مدى الحياة</span></div>
+        <ul class="plan-features">
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> 5 مشاريع/بوتات</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> 4GB RAM</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> CPU 100%</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> تشغيل 24/7</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> بيئة Node.js مخصصة</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> Auto-Restart</li>
+        </ul>
+        <button class="btn-primary plan-btn" onclick="selectPlan('pro')">إنشاء الهوست</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-badge business">استوديوهات</div>
+        <h3>Studio Max</h3>
+        <div class="plan-price"><span class="price-num">$0</span><span class="price-period">/مدى الحياة</span></div>
+        <ul class="plan-features">
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> مساحة عمل غير محدودة</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> 16GB RAM</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> معالج مخصص للمهام الثقيلة</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> دعم Localhost & GitHub</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> بيئة JavaScript متكاملة</li>
+          <li><i class="fa-solid fa-check" style="color: var(--neon-green); margin-left: 8px;"></i> IP مخصص</li>
+        </ul>
+        <button class="btn-outline plan-btn" onclick="selectPlan('business')">إنشاء الهوست</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="rules" id="rules">
+    <div class="section-header">
+      <span class="section-tag neon-red">سياسات الاستخدام</span>
+      <h2>قوانين صارمة لبيئة احترافية</h2>
+      <p>نحافظ على استقرار الخوادم من خلال سياسات واضحة تُطبق برمجياً</p>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card banned">
+        <div class="rule-icon"><i class="fa-solid fa-user-slash"></i></div>
+        <h3>ممنوع — Discord Self-Bots</h3>
+        <p>حسب شروط خدمة Discord، يُمنع تشغيل حسابات بشرية كبوتات. <strong>الاستثناء:</strong> يُسمح بمشاريع WhatsApp Self-bots (مثل مكتبة Baileys).</p>
+        <div class="rule-tag banned-tag">تصفية تلقائية عبر الـ API</div>
+      </div>
+      <div class="rule-card banned">
+        <div class="rule-icon"><i class="fa-solid fa-ban"></i></div>
+        <h3>ممنوع — محتوى غير قانوني</h3>
+        <p>أي استضافة لمحتوى ينتهك القوانين أو توزيع ملفات ضارة. <strong>إيقاف نهائي</strong> للمساحة البرمجية بالكامل.</p>
+        <div class="rule-tag banned-tag">PERMANENT SUSPENSION</div>
+      </div>
+      <div class="rule-card banned">
+        <div class="rule-icon"><i class="fa-solid fa-server"></i></div>
+        <h3>ممنوع — إعادة الاستضافة (Hosting)</h3>
+        <p>لا يجوز استخدام الخادم لتشغيل بيئة استضافة فرعية داخلية لتوزيعها على أطراف أخرى. هذا يُعتبر استنزافاً غير مبرر للموارد.</p>
+        <div class="rule-tag banned-tag">RESOURCE ABUSE</div>
+      </div>
+      <div class="rule-card warning">
+        <div class="rule-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+        <h3>تحذير — السبام (Spam Bots)</h3>
+        <p>البوتات التي تعتمد على إرسال رسائل جماعية عشوائية للمستخدمين. يتم توجيه تحذير أولي، ثم إيقاف السيرفر في حال التكرار.</p>
+        <div class="rule-tag warning-tag">مراقبة الشبكة</div>
+      </div>
+      <div class="rule-card warning">
+        <div class="rule-icon"><i class="fa-solid fa-bug"></i></div>
+        <h3>ممنوع — البرمجيات الخبيثة</h3>
+        <p>أي محاولة لاستخدام بيئة JavaScript لتنفيذ أو رفع كود خبيث (Malware). سيتم حظر عنوان الـ IP فوراً.</p>
+        <div class="rule-tag banned-tag">حظر الـ IP</div>
+      </div>
+      <div class="rule-card warning">
+        <div class="rule-icon"><i class="fa-solid fa-burst"></i></div>
+        <h3>ممنوع — Nuker & DDoS Bots</h3>
+        <p>الأكواد المخصصة لتدمير سيرفرات الديسكورد أو تنفيذ هجمات حجب الخدمة محظورة كلياً داخل بيئة الاستضافة.</p>
+        <div class="rule-tag banned-tag">إيقاف فوري للعملية</div>
+      </div>
+    </div>
+    <div class="rules-note">
+      <span><i class="fa-solid fa-microchip"></i></span>
+      <span>نظام المراقبة يفحص استهلاك المعالج والذاكرة بشكل مستمر — يتم عزل العمليات المشبوهة تلقائياً للحفاظ على الاستقرار</span>
+    </div>
+  </section>
+
+  <section class="status-section" id="status">
+    <div class="section-header">
+      <span class="section-tag neon-green">حالة النظام</span>
+      <h2>أداء الخوادم المباشر</h2>
+      <p>شفافية كاملة بخصوص حالة الشبكة والبنية التحتية</p>
+    </div>
+    <div class="status-grid" id="statusGrid">
+      </div>
+    <div class="uptime-chart">
+      <h3>معدل استقرار الشبكة — آخر 30 يوم</h3>
+      <div class="uptime-bars" id="uptimeBars"></div>
+      <div class="uptime-legend">
+        <span class="legend-item"><span class="legend-dot green"></span>استقرار تام (100%)</span>
+        <span class="legend-item"><span class="legend-dot yellow"></span>ضغط على الشبكة</span>
+        <span class="legend-item"><span class="legend-dot red"></span>إعادة تشغيل النظام</span>
+      </div>
+    </div>
+  </section>
+  <section class="my-bots" id="bots">
+    <div class="section-header">
+      <span class="section-tag">مساحة العمل</span>
+      <h2>إدارة المشاريع (Bots)</h2>
+      <p>تحكم كامل بسيرفراتك وعمليات الـ Node.js من مكان واحد</p>
+    </div>
+    <div class="bots-container" id="botsContainer">
+      <div class="login-prompt" id="loginPrompt">
+        <div class="login-prompt-icon"><i class="fa-solid fa-terminal"></i></div>
+        <h3>سجّل دخول لإدارة مشاريعك</h3>
+        <p>أنشئ حسابك المجاني الآن وابدأ الاستضافة البرمجية فوراً</p>
+        <button class="btn-primary" id="loginPromptBtn"><i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول / إنشاء حساب</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon"><i class="fa-solid fa-hexagon-nodes"></i></span>
+        <span class="logo-text">Wano<span class="logo-accent">Host</span></span>
+        <p>بنية تحتية متطورة لاستضافة بيئات JavaScript مجاناً بالكامل.</p>
+        <div class="footer-social">
+          <a href="#" target="_blank"><i class="fa-brands fa-discord"></i> Discord</a>
+          <a href="#" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+          <a href="https://github.com/wn6b" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>الخدمات</h4>
+          <a href="#">الاستضافة المجانية</a>
+          <a href="#">API Documentation</a>
+          <a href="#">حالة السيرفرات</a>
+        </div>
+        <div class="footer-col">
+          <h4>الدعم التقني</h4>
+          <a href="#">مستندات المطورين</a>
+          <a href="#">تذكرة دعم (Ticket)</a>
+          <a href="#">مجتمع المطورين</a>
+        </div>
+        <div class="footer-col">
+          <h4>القانوني</h4>
+          <a href="#">شروط الاستخدام</a>
+          <a href="#">سياسة الخصوصية</a>
+          <a href="#">سياسة الاستهلاك العادل</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 WanoHost — تم التطوير بواسطة Marwan | Wano</span>
+      <span class="footer-status"><span class="pulse-dot small"></span> جميع الأنظمة تعمل</span>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tabLogin">تسجيل الدخول</button>
+        <button class="modal-tab" id="tabRegister">إنشاء حساب</button>
+      </div>
+      <div class="modal-form" id="formLogin">
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="loginEmail" placeholder="developer@example.com" />
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" />
+        </div>
+        <div class="form-msg" id="loginMsg"></div>
+        <button class="btn-primary form-submit" id="submitLogin"><i class="fa-solid fa-right-to-bracket"></i> دخول إلى اللوحة</button>
+      </div>
+      <div class="modal-form hidden" id="formRegister">
+        <div class="form-group">
+          <label>اسم المطور</label>
+          <input type="text" id="regUsername" placeholder="مثال: Wano" />
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="regEmail" placeholder="developer@example.com" />
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="regPassword" placeholder="8 أحرف على الأقل" />
+        </div>
+        <div class="form-msg" id="registerMsg"></div>
+        <button class="btn-primary form-submit" id="submitRegister"><i class="fa-solid fa-user-plus"></i> إنشاء الحساب</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deployModal">
+    <div class="modal-box deploy-box">
+      <button class="modal-close" id="deployClose"><i class="fa-solid fa-xmark"></i></button>
+      <h3><i class="fa-solid fa-server"></i> إنشاء هوست جديد</h3>
+      <div class="form-group">
+        <label>معرف المشروع (Bot Name)</label>
+        <input type="text" id="botName" placeholder="WanoProject_1" />
+      </div>
+      <div class="form-group">
+        <label>المنصة المستهدفة</label>
+        <select id="botPlatform">
+          <option value="discord">Discord API</option>
+          <option value="telegram">Telegram API</option>
+          <option value="whatsapp">WhatsApp (Baileys)</option>
+          <option value="slack">Slack API</option>
+          <option value="twitter">Twitter/X API</option>
+          <option value="custom">Custom Webhook</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>بيئة التشغيل (JavaScript حصراً)</label>
+        <select id="botLang">
+          <option value="nodejs">Node.js (v20.x)</option>
+          <option value="deno">Deno</option>
+          <option value="bun">Bun.js</option>
+        </select>
+      </div>
+      <div class="form-msg" id="deployMsg"></div>
+      <button class="btn-primary form-submit" id="submitDeploy"><i class="fa-solid fa-rocket"></i> بدء التنصيب والتشغيل</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
