@@ -3,34 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANO CLOUD | 2026 ENGINE</title>
+    <title>WANO CLOUD | ULTRA REALISTIC 2026</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav>
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div class="logo">
-                <svg class="logo-vector" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <div class="container">
+            <a href="#" class="logo-wrapper">
+                <svg class="logo-vector" viewBox="0 0 24 24">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                 </svg>
-                <span style="font-weight: 800; letter-spacing: 1px; margin-right: 10px;">WANO CLOUD</span>
-            </div>
+                <span class="logo-text">WANO CLOUD</span>
+            </a>
             <button class="btn-primary" onclick="login()">لوحة التحكم</button>
         </div>
     </nav>
 
     <div class="container">
+        <header>
+            <h1>الجيل القادم من الاستضافة</h1>
+            <p>تحكم كامل بمواردك، حماية فائقة بالذكاء الاصطناعي، وأداء لا يضاهى.</p>
+        </header>
+
         <section class="rules-panel">
-            <h2>الرقابة الذكية (AI) والقوانين</h2>
-            <div class="rule-item">نظام الذكاء الاصطناعي يراقب الهوستات؛ أي سيلف بوت (Self-Bot) ديسكورد يؤدي لحظر الهوست فوراً.</div>
-            <div class="rule-item">يُمنع استخدام سكريبتات الاختراق أو التشفير غير القانوني.</div>
+            <h2>
+                <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
+                نظام المراقبة الذكي (AI SHIELD)
+            </h2>
+            <div class="rule-list">
+                <div class="rule-item">يتم فحص محتوى السكريبتات تلقائياً؛ أي محاولة لإنشاء Self-bot ديسكورد تؤدي للحظر.</div>
+                <div class="rule-item">يُمنع استغلال موارد السيرفر في التعدين أو هجمات الحجب.</div>
+            </div>
         </section>
 
-        <header style="text-align: center; margin: 40px 0;">
-            <h1 style="font-size: 2.2rem; margin-bottom: 10px;">منصة الاستضافة المتطورة</h1>
-            <p style="color: var(--text-dim);">أنشئ هوست خاص بك، وتحكم في بيئتك البرمجية بالكامل.</p>
-        </header>
+        <div class="main-actions">
+            <button class="btn-create-host" onclick="createNewHost()">
+                <div class="btn-create-host-inner">
+                    <svg class="btn-create-host-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                    </svg>
+                    <span class="btn-create-host-text">إنشاء هوست جديد</span>
+                </div>
+            </button>
+        </div>
 
         <div class="dashboard-grid" id="hostsGrid">
             </div>
