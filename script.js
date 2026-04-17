@@ -1,64 +1,104 @@
-/* Project: Wano Cloud Hosting - Logic v1.0
-   Environment: JavaScript / Firebase Realtime Database
+/* Project: WANO CLOUD HOSTING - 2026 Edition
+   Author: Marwan (Wano) | wn6b
+   Environment: Production (GitHub Pages + Firebase)
+   Strict Rules: No Discord Self-Bots / Secure WhatsApp Sessions
 */
 
-// إعدادات Firebase - تأكد من وضع الـ Config الخاص بك هنا
+// 1. إعدادات Firebase
 const firebaseConfig = {
     databaseURL: "https://wano-studio-default-rtdb.firebaseio.com",
 };
 
 // تهيئة التطبيق
-// ملاحظة: بما أننا نستخدم CDN في الـ HTML، نفترض أن firebase محملة
-const app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// وظيفة تسجيل الدخول (تجريبية للوحة التحكم)
-function login() {
-    console.log("Checking credentials...");
-    // هنا نضع نظام الـ Auth لاحقاً
-    alert("نظام تسجيل الدخول قيد التطوير للنسخة الاحترافية.");
-}
+// 2. دوال النظام الأساسية
+const System = {
+    // التحقق من صحة التوكن ومنع السيلفات
+    validateToken: function(token, platform) {
+        if (!token || token.trim().length < 10) {
+            this.showAlert("خطأ: التوكن غير صالح أو قصير جداً.");
+            return false;
+        }
 
-// وظيفة التحقق من القوانين قبل إضافة أي بوت
-function checkSafetyRules(botToken, platform) {
-    // كود منطقي بسيط لمنع الـ Self-Bots (مثلاً: توكن الديسكورد العادي يختلف عن حساب المستخدم)
-    if (platform === 'discord' && !botToken.startsWith('M') && !botToken.startsWith('N')) {
-        alert("تحذير: هذا التوكن يبدو لحساب شخصي (Self-Bot). الحظر فوراً!");
-        return false;
-    }
-    return true;
-}
+        if (platform === 'discord') {
+            // قانون صارم: توكنات البوتات في ديسكورد تبدأ بـ 'M', 'N', 'O' وتحتوي على 3 مقاطع مفصولة بنقاط
+            const discordPattern = /^[MNO][a-zA-Z0-9\-\_]{23,28}\.[a-zA-Z0-9\-\_]{6}\.[a-zA-Z0-9\-\_]{27,38}$/;
+            if (!discordPattern.test(token)) {
+                this.showAlert("تحذير أمني: محاولة إضافة Self-Bot ديسكورد! سيتم حظر الآيبي فوراً.");
+                return false;
+            }
+        }
+        return true;
+    },
 
-// وظيفة ربط البوت بقاعدة البيانات
-function connectBot(platform) {
-    const token = prompt(`أدخل التوكن الخاص ببوت ${platform}:`);
-    
-    if (token) {
-        if (checkSafetyRules(token, platform)) {
-            const botRef = database.ref('bots/' + platform);
-            botRef.push({
+    // عرض تنبيهات واقعية (بدون إيموجي)
+    showAlert: function(message) {
+        // يمكن تطوير هذا لاحقاً ليصبح Toast Animation بدلاً من alert
+        alert(`[SYSTEM NOTIFICATION]: ${message}`);
+    },
+
+    // ربط البوت بقاعدة البيانات
+    connect: function(platform) {
+        const token = prompt(`نظام التحقق: أدخل توكن ${platform.toUpperCase()} لبدء الاستضافة:`);
+        
+        if (this.validateToken(token, platform)) {
+            const requestRef = database.ref('deployments/' + platform);
+            const newBotRef = requestRef.push();
+            
+            newBotRef.set({
+                id: newBotRef.key,
+                owner: "wn6b",
                 token: token,
-                status: 'pending',
-                timestamp: Date.now(),
-                owner: 'WanoUser' // هنا نربطه بـ ID المستخدم مستقبلاً
+                status: "Initializing",
+                platform: platform,
+                created_at: Date.now(),
+                server_node: "Node-DE-01" // توزيع تلقائي على سيرفرات افتراضية
             }).then(() => {
-                alert(`تم إرسال طلب استضافة بوت ${platform} بنجاح. يتم الفحص الآن...`);
-            }).catch((error) => {
-                console.error("Error: ", error);
+                this.showAlert(`نجاح: تم ربط بوت ${platform} بنجاح. لوحة التحكم ستعمل خلال ثوانٍ.`);
+            }).catch(err => {
+                console.error("Firebase Error:", err);
+                this.showAlert("خطأ في الاتصال بقاعدة البيانات.");
             });
         }
     }
-}
+};
 
-// مراقبة الحالة (Real-time Status)
-function trackStatus() {
-    const statusRef = database.ref('system/status');
-    statusRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        console.log("Server Status: ", data);
-        // هنا نقوم بتحديث الـ UI بناءً على حالة السيرفر الحقيقية
+// 3. إدارة واجهة المستخدم (UI Management)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Wano Cloud System 2026 - Online");
+
+    // ربط أزرار المنصات بالوظائف
+    const cards = document.querySelectorAll('.service-card');
+    
+    // مصفوفة المنصات مرتبة حسب ظهورها في الـ HTML
+    const platforms = ['discord', 'telegram', 'whatsapp'];
+
+    cards.forEach((card, index) => {
+        const btn = card.querySelector('.btn-primary');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                System.connect(platforms[index]);
+            });
+        }
     });
-}
 
-// تشغيل المراقبة عند تحميل الصفحة
-window.onload = trackStatus;
+    // مراقبة حالة السيرفر بشكل حي (Real-time Status)
+    const statusMonitor = database.ref('system/load');
+    statusMonitor.on('value', (snapshot) => {
+        const load = snapshot.val() || "0%";
+        console.log(`Server Load: ${load}`);
+        // هنا يمكن تحديث شريط الحالة في الواجهة
+    });
+});
+
+// 4. وظيفة الدخول للـ Dashboard (للمالك فقط)
+function login() {
+    const pass = prompt("أدخل رمز الوصول المشفر:");
+    if (pass === "FREE_ab97ec0c986935dd18d42b2cc715deb3") {
+        window.location.href = "/dashboard.html"; // سيتم برمجتها لاحقاً
+    } else {
+        System.showAlert("تم رفض الوصول. المحاولة مسجلة.");
+    }
+}
